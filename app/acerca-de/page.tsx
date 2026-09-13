@@ -3,6 +3,9 @@
 // Acerca de + Contacto, portada de resources/home-about/about.jsx.
 
 import { useEffect, useState } from "react";
+import { sendContactMessage } from "./actions";
+
+const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
 function useReveal() {
   useEffect(() => {
@@ -78,12 +81,31 @@ export default function AcercaDe() {
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
   const [sent, setSent] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.msg.trim()) {
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.msg.trim() ||
+      !EMAIL_RE.test(form.email.trim())
+    ) {
       setShake(true);
       setTimeout(() => setShake(false), 400);
+      return;
+    }
+    setError(null);
+    setSending(true);
+    const result = await sendContactMessage({
+      name: form.name,
+      email: form.email,
+      message: form.msg,
+    });
+    setSending(false);
+    if (!result.ok) {
+      setError(result.error);
       return;
     }
     setSent(form.name.trim());
@@ -168,8 +190,14 @@ export default function AcercaDe() {
                     placeholder="Cuéntanos qué tienes en mente…"
                   />
                 </div>
-                <button className="btn xl press" type="submit" style={{ width: "100%" }}>
-                  ▶  ENVIAR MENSAJE
+                {error && <p className="contact-error">⚠ {error}</p>}
+                <button
+                  className="btn xl press"
+                  type="submit"
+                  disabled={sending}
+                  style={{ width: "100%" }}
+                >
+                  {sending ? "ENVIANDO…" : "▶  ENVIAR MENSAJE"}
                 </button>
               </>
             ) : (
