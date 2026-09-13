@@ -17,12 +17,12 @@ export default function AuthPage() {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     login(user);
-    router.push("/");
+    router.push("/biblioteca");
   };
 
   const playAsGuest = () => {
     loginGuest();
-    router.push("/");
+    router.push("/biblioteca");
   };
 
   return (
