@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Prototipo de referencia (ver CLAUDE.md): JSX standalone sin build
+    // step, no es código de la app y no sigue sus convenciones.
+    "resources/**",
   ]),
 ]);
 
