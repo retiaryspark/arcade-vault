@@ -4,13 +4,7 @@
 // `scores` (insert solo si auth.uid() = user_id).
 
 import { createClient } from "@/lib/supabase/client";
-
-export interface RealScoreRow {
-  rank: number;
-  name: string;
-  score: number;
-  date: string;
-}
+import type { ScoreRow } from "@/lib/data";
 
 async function ensureUserId(
   supabase: ReturnType<typeof createClient>,
@@ -42,4 +36,32 @@ export async function saveScore(
     score,
   });
   if (error) throw error;
+}
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `${day}/${month}/${d.getFullYear()}`;
+}
+
+export async function getScores(
+  gameId: string,
+  limit = 12,
+): Promise<ScoreRow[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("scores")
+    .select("player_name, score, created_at")
+    .eq("game_id", gameId)
+    .order("score", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+
+  return (data ?? []).map((row, i) => ({
+    rank: i + 1,
+    name: row.player_name,
+    score: row.score,
+    date: formatDate(row.created_at),
+  }));
 }
