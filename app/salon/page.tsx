@@ -6,7 +6,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { GAMES, seededScores, type ScoreRow } from "@/lib/data";
+import { GAMES, seededScores, rankClass, type ScoreRow } from "@/lib/data";
 import { useSession } from "@/lib/session-context";
 import { getScores } from "@/lib/scores";
 import { REAL_GAMES } from "@/components/games/registry";
@@ -143,16 +143,7 @@ export default function SalonPage() {
             {rows.map((r, i) => (
               <div
                 key={r.rank}
-                className={
-                  "tr" +
-                  (i === 0
-                    ? " top1"
-                    : i === 1
-                      ? " top2"
-                      : i === 2
-                        ? " top3"
-                        : "")
-                }
+                className={"tr" + rankClass(i)}
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
@@ -183,7 +174,7 @@ export default function SalonPage() {
                       textShadow: "0 0 6px rgba(245,255,0,0.5)",
                     }}
                   >
-                    {(youScore || 9999).toLocaleString("es-ES")}
+                    {(youScore ?? 9999).toLocaleString("es-ES")}
                   </div>
                   <div className="dt">11/05/2026</div>
                 </div>

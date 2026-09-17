@@ -122,6 +122,11 @@ export interface ScoreRow {
   date: string;
 }
 
+// Clase CSS de podio (top1/top2/top3) según la posición, o vacío.
+export function rankClass(i: number): string {
+  return i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "";
+}
+
 export function seededScores(seed: number, count = 12): ScoreRow[] {
   let s = seed;
   const rand = () => (s = (s * 9301 + 49297) % 233280) / 233280;

@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { GAMES, seededScores } from "@/lib/data";
+import { GAMES, seededScores, rankClass } from "@/lib/data";
 import { getScores } from "@/lib/scores";
 import { REAL_GAMES } from "@/components/games/registry";
 
@@ -94,16 +94,7 @@ export default async function GameDetailPage({
             scores.map((r, i) => (
               <div
                 key={r.rank}
-                className={
-                  "lb-row" +
-                  (i === 0
-                    ? " top1"
-                    : i === 1
-                      ? " top2"
-                      : i === 2
-                        ? " top3"
-                        : "")
-                }
+                className={"lb-row" + rankClass(i)}
               >
                 <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
                 <div className="pl">

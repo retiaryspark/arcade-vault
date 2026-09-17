@@ -3,6 +3,8 @@
 // dibuja su propio HUD de texto: expone el estado del juego vía callbacks
 // para que lo muestre el HUD externo de GamePlayer.
 
+import type { RealGameProps, RealGameState } from "../registry";
+
 const W = 800;
 const H = 600;
 
@@ -309,17 +311,6 @@ class Particle {
   }
 }
 
-export interface AsteroidsState {
-  score: number;
-  lives: number;
-  level: number;
-}
-
-export interface AsteroidsCallbacks {
-  onStateChange: (state: AsteroidsState) => void;
-  onGameOver: (finalScore: number) => void;
-}
-
 type GameState = "playing" | "dead" | "gameover";
 
 export class AsteroidsGame {
@@ -341,7 +332,7 @@ export class AsteroidsGame {
   private state: GameState = "playing";
   private deadTimer = 0;
   private gameOverEmitted = false;
-  private lastEmitted: AsteroidsState = { score: -1, lives: -1, level: -1 };
+  private lastEmitted: RealGameState = { score: -1, lives: -1, level: -1 };
 
   private rafId: number | null = null;
   private lastTime: number | null = null;
@@ -350,7 +341,7 @@ export class AsteroidsGame {
 
   constructor(
     canvas: HTMLCanvasElement,
-    private callbacks: AsteroidsCallbacks,
+    private callbacks: RealGameProps,
   ) {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("No se pudo obtener el contexto 2D del canvas");
@@ -399,7 +390,7 @@ export class AsteroidsGame {
   }
 
   private emitState() {
-    const next: AsteroidsState = {
+    const next: RealGameState = {
       score: this.score,
       lives: this.lives,
       level: this.level,

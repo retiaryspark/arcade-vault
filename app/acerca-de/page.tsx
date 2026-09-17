@@ -2,29 +2,11 @@
 
 // Acerca de + Contacto, portada de resources/home-about/about.jsx.
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useReveal } from "@/lib/use-reveal";
 import { sendContactMessage } from "./actions";
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
-
-function useReveal() {
-  useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-}
 
 function HighlightIcon({ kind }: { kind: "HEART" | "BROWSER" | "PLANT" }) {
   const C = "currentColor";
