@@ -1,6 +1,6 @@
 # 04 — Asteroids: primer juego real jugable
 
-**Estado:** Aprobado
+**Estado:** Completado
 **Depende de:** SPEC 01, SPEC 02 (integración base de Supabase ya mezclada a `main`)
 **Fecha:** 2026-09-16
 
@@ -125,7 +125,7 @@ export const REAL_GAMES: Record<
 
 - [x] El proveedor de inicio de sesión anónimo está habilitado en el proyecto de Supabase.
 - [x] En `lib/data.ts`, la entrada del catálogo tiene `id: "asteroids"` y `title: "ASTEROIDS"` (ya no `"rocas"`/`"ROCAS"`).
--[x] `/juego/asteroids/jugar` es Asteroids real y jugable con teclado: inercia/rotación de nave, disparo, envolvimiento toroidal, división de asteroides, power-up de disparo triple, 3 vidas con invencibilidad al reaparecer, y niveles que aumentan la cantidad de asteroides.
+- [x] `/juego/asteroids/jugar` es Asteroids real y jugable con teclado: inercia/rotación de nave, disparo, envolvimiento toroidal, división de asteroides, power-up de disparo triple, 3 vidas con invencibilidad al reaparecer, y niveles que aumentan la cantidad de asteroides.
 - [x] La nave, las balas y el power-up se ven en cian; los asteroides y las partículas de explosión en magenta.
 - [x] El HUD externo del reproductor (Puntuación/Vidas/Nivel) refleja el estado real del juego; el canvas no dibuja su propio texto de HUD.
 - [x] PAUSA detiene por completo el juego (nada se mueve) y REANUDAR lo continúa donde quedó.
@@ -158,9 +158,9 @@ export const REAL_GAMES: Record<
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Recolorear cada `draw()` portado del original es propenso a que se cuele un `strokeStyle`/`fillStyle` en blanco olvidado. | Revisión visual manual de cada elemento (nave, balas, asteroides, partículas, power-up) en el paso 2, antes de conectar el HUD en el paso 4. |
-| Montar la clase del juego dentro de un `useEffect` de React (con Strict Mode de desarrollo invocando efectos dos veces) puede duplicar el loop o los listeners de teclado si la limpieza no cancela todo. | Guardar el id de `requestAnimationFrame` y las referencias de los listeners para cancelarlos/quitarlos explícitamente en el cleanup del efecto; probar con recarga en modo desarrollo antes de dar el paso 3 por terminado. |
-| Habilitar el proveedor de inicio de sesión anónimo es una opción de proyecto en el dashboard de Supabase, no algo que las herramientas de este entorno puedan aplicar por SQL. | Paso manual explícito en el paso 1 del plan, con verificación manual antes de continuar al paso 5. |
-| Cada partida sin sesión de navegador previa crea un usuario anónimo nuevo en `auth.users`; con el tiempo acumula muchas filas de usuarios anónimos sin vínculo entre sí. | Aceptado conscientemente: es el comportamiento estándar de `signInAnonymously` de Supabase y el mismo enfoque que ya elegía SPEC 02 completo para "invitado". Limpiar usuarios anónimos viejos, si hace falta, es tarea operativa fuera de este spec. |
+| Riesgo                                                                                                                                                                                                    | Mitigación                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Recolorear cada `draw()` portado del original es propenso a que se cuele un `strokeStyle`/`fillStyle` en blanco olvidado.                                                                                 | Revisión visual manual de cada elemento (nave, balas, asteroides, partículas, power-up) en el paso 2, antes de conectar el HUD en el paso 4.                                                                                                          |
+| Montar la clase del juego dentro de un `useEffect` de React (con Strict Mode de desarrollo invocando efectos dos veces) puede duplicar el loop o los listeners de teclado si la limpieza no cancela todo. | Guardar el id de `requestAnimationFrame` y las referencias de los listeners para cancelarlos/quitarlos explícitamente en el cleanup del efecto; probar con recarga en modo desarrollo antes de dar el paso 3 por terminado.                           |
+| Habilitar el proveedor de inicio de sesión anónimo es una opción de proyecto en el dashboard de Supabase, no algo que las herramientas de este entorno puedan aplicar por SQL.                            | Paso manual explícito en el paso 1 del plan, con verificación manual antes de continuar al paso 5.                                                                                                                                                    |
+| Cada partida sin sesión de navegador previa crea un usuario anónimo nuevo en `auth.users`; con el tiempo acumula muchas filas de usuarios anónimos sin vínculo entre sí.                                  | Aceptado conscientemente: es el comportamiento estándar de `signInAnonymously` de Supabase y el mismo enfoque que ya elegía SPEC 02 completo para "invitado". Limpiar usuarios anónimos viejos, si hace falta, es tarea operativa fuera de este spec. |
