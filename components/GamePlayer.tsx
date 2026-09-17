@@ -11,6 +11,7 @@ import Link from "next/link";
 import type { Game } from "@/lib/data";
 import { useSession } from "@/lib/session-context";
 import { REAL_GAMES, type RealGameHandle } from "@/components/games/registry";
+import { saveScore } from "@/lib/scores";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [over, setOver] = useState(false);
   const [name, setName] = useState(session ? session.name : "INVITADO");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [playId, setPlayId] = useState(0);
   const level = RealGame ? realLevel : 1 + Math.floor(score / 2500);
   const gameRef = useRef<RealGameHandle>(null);
@@ -58,7 +61,27 @@ export default function GamePlayer({ game }: { game: Game }) {
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setSaveError(null);
     if (RealGame) setPlayId((id) => id + 1);
+  };
+
+  const handleSave = async () => {
+    if (!RealGame) {
+      setSaved(true);
+      return;
+    }
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await saveScore(game.id, name, score);
+      setSaved(true);
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : "No se pudo guardar la puntuación",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -165,9 +188,25 @@ export default function GamePlayer({ game }: { game: Game }) {
                   }
                   placeholder="TUS INICIALES"
                 />
-                <button className="btn yellow" onClick={() => setSaved(true)}>
-                  GUARDAR PUNTUACIÓN
+                <button
+                  className="btn yellow"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? "GUARDANDO..." : "GUARDAR PUNTUACIÓN"}
                 </button>
+                {saveError && (
+                  <div
+                    className="mono"
+                    style={{
+                      color: "var(--magenta)",
+                      fontSize: 11,
+                      marginTop: 8,
+                    }}
+                  >
+                    {saveError}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
