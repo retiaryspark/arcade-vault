@@ -2,29 +2,10 @@
 
 // Home (landing), portada de resources/home-about/home.jsx.
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { GAMES } from "@/lib/data";
+import { GAMES, rankClass } from "@/lib/data";
+import { useReveal } from "@/lib/use-reveal";
 import MiniGameCard from "@/components/MiniGameCard";
-
-function useReveal() {
-  useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-}
 
 function FloatingSilhouettes() {
   return (
@@ -300,7 +281,7 @@ export default function Home() {
             </div>
             <div className="top-list">
               {TOP_PLAYERS_TODAY.map((r, i) => (
-                <div key={i} className={"top-row" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")}>
+                <div key={i} className={"top-row" + rankClass(i)}>
                   <span className="tp-rk">#{String(r.r).padStart(2, "0")}</span>
                   <span className="tp-bar"><span className="tp-fill" style={{ width: 100 - i * 16 + "%" }} /></span>
                   <span className="tp-p">{r.p}</span>

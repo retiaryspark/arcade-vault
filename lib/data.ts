@@ -73,8 +73,8 @@ export const GAMES: Game[] = [
     plays: "18.0K",
   },
   {
-    id: "rocas",
-    title: "ROCAS",
+    id: "asteroids",
+    title: "ASTEROIDS",
     short: "Pulveriza asteroides en gravedad cero.",
     long: "Tu nave triangular flota en vacío absoluto. Dispara y rota para dividir rocas en fragmentos cada vez más pequeños. Cuidado con los OVNIs en el horizonte.",
     cat: "SHOOTER",
@@ -120,6 +120,11 @@ export interface ScoreRow {
   name: string;
   score: number;
   date: string;
+}
+
+// Clase CSS de podio (top1/top2/top3) según la posición, o vacío.
+export function rankClass(i: number): string {
+  return i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "";
 }
 
 export function seededScores(seed: number, count = 12): ScoreRow[] {
