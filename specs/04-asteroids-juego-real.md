@@ -123,20 +123,20 @@ export const REAL_GAMES: Record<
 
 ## Criterios de aceptación
 
-- [ ] El proveedor de inicio de sesión anónimo está habilitado en el proyecto de Supabase.
-- [ ] En `lib/data.ts`, la entrada del catálogo tiene `id: "asteroids"` y `title: "ASTEROIDS"` (ya no `"rocas"`/`"ROCAS"`).
-- [ ] `/juego/asteroids/jugar` es Asteroids real y jugable con teclado: inercia/rotación de nave, disparo, envolvimiento toroidal, división de asteroides, power-up de disparo triple, 3 vidas con invencibilidad al reaparecer, y niveles que aumentan la cantidad de asteroides.
-- [ ] La nave, las balas y el power-up se ven en cian; los asteroides y las partículas de explosión en magenta.
-- [ ] El HUD externo del reproductor (Puntuación/Vidas/Nivel) refleja el estado real del juego; el canvas no dibuja su propio texto de HUD.
-- [ ] PAUSA detiene por completo el juego (nada se mueve) y REANUDAR lo continúa donde quedó.
-- [ ] FIN termina la partida al instante y abre el modal de fin de juego, igual que en los demás juegos.
-- [ ] GUARDAR PUNTUACIÓN en Asteroids crea una sesión anónima si no existe, e inserta una fila real en `scores` con `user_id` real y las iniciales tecleadas, verificable con una consulta directa a la tabla.
-- [ ] El panel "MEJORES PUNTUACIONES" en `/juego/asteroids` muestra filas reales de `scores`, con estado vacío explícito si no hay ninguna todavía.
-- [ ] La pestaña ASTEROIDS del Salón de la Fama muestra podio y tabla desde `scores` real (con "—" o estado vacío cuando faltan filas) y no muestra la fila "TU MEJOR MARCA".
-- [ ] Los otros 7 juegos (reproductor, Detalle y Salón) no cambiaron: siguen con la simulación visual y `seededScores` exactamente como en SPEC 01.
-- [ ] Las flechas y la barra espaciadora no hacen scroll de la página mientras se juega Asteroids.
-- [ ] Salir de la partida o navegar a otra pantalla detiene el loop del juego sin errores en consola.
-- [ ] `npm run dev` levanta sin errores y `npm run lint` pasa limpio.
+- [x] El proveedor de inicio de sesión anónimo está habilitado en el proyecto de Supabase.
+- [x] En `lib/data.ts`, la entrada del catálogo tiene `id: "asteroids"` y `title: "ASTEROIDS"` (ya no `"rocas"`/`"ROCAS"`).
+-[x] `/juego/asteroids/jugar` es Asteroids real y jugable con teclado: inercia/rotación de nave, disparo, envolvimiento toroidal, división de asteroides, power-up de disparo triple, 3 vidas con invencibilidad al reaparecer, y niveles que aumentan la cantidad de asteroides.
+- [x] La nave, las balas y el power-up se ven en cian; los asteroides y las partículas de explosión en magenta.
+- [x] El HUD externo del reproductor (Puntuación/Vidas/Nivel) refleja el estado real del juego; el canvas no dibuja su propio texto de HUD.
+- [x] PAUSA detiene por completo el juego (nada se mueve) y REANUDAR lo continúa donde quedó.
+- [x] FIN termina la partida al instante y abre el modal de fin de juego, igual que en los demás juegos.
+- [x] GUARDAR PUNTUACIÓN en Asteroids crea una sesión anónima si no existe, e inserta una fila real en `scores` con `user_id` real y las iniciales tecleadas, verificable con una consulta directa a la tabla.
+- [x] El panel "MEJORES PUNTUACIONES" en `/juego/asteroids` muestra filas reales de `scores`, con estado vacío explícito si no hay ninguna todavía.
+- [x] La pestaña ASTEROIDS del Salón de la Fama muestra podio y tabla desde `scores` real (con "—" o estado vacío cuando faltan filas) y no muestra la fila "TU MEJOR MARCA".
+- [x] Los otros 7 juegos (reproductor, Detalle y Salón) no cambiaron: siguen con la simulación visual y `seededScores` exactamente como en SPEC 01.
+- [x] Las flechas y la barra espaciadora no hacen scroll de la página mientras se juega Asteroids.
+- [x] Salir de la partida o navegar a otra pantalla detiene el loop del juego sin errores en consola.
+- [x] `npm run dev` levanta sin errores y `npm run lint` pasa limpio.
 
 ---
 

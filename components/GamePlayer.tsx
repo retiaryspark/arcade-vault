@@ -1,40 +1,64 @@
 "use client";
 
-// HUD + bezel CRT + partida simulada + modal de fin de juego.
-// Portado de resources/templates/reproductor.jsx. No hay lógica de juego
-// real: el marcador sube solo mientras no está en pausa ni terminado.
+// HUD + bezel CRT + modal de fin de juego. Portado de
+// resources/templates/reproductor.jsx. Si el juego tiene motor real
+// (components/games/registry.ts), el HUD refleja su estado real; si no,
+// se usa la partida simulada del MVP (el marcador sube solo).
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Game } from "@/lib/data";
 import { useSession } from "@/lib/session-context";
+import { REAL_GAMES, type RealGameHandle } from "@/components/games/registry";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { session } = useSession();
+  const RealGame = REAL_GAMES[game.id];
 
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
+  const [realLevel, setRealLevel] = useState(1);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
   const [name, setName] = useState(session ? session.name : "INVITADO");
   const [saved, setSaved] = useState(false);
-  const level = 1 + Math.floor(score / 2500);
+  const [playId, setPlayId] = useState(0);
+  const level = RealGame ? realLevel : 1 + Math.floor(score / 2500);
+  const gameRef = useRef<RealGameHandle>(null);
 
   useEffect(() => {
-    if (over || paused) return;
-    const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
+    if (RealGame || over || paused) return;
+    const t = setInterval(
+      () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
+      220,
+    );
     return () => clearInterval(t);
-  }, [over, paused]);
+  }, [RealGame, over, paused]);
 
-  const endGame = () => setOver(true);
+  const endGame = () => {
+    if (RealGame) gameRef.current?.forceGameOver();
+    else setOver(true);
+  };
+  const togglePause = () => {
+    setPaused((p) => {
+      const next = !p;
+      if (RealGame) {
+        if (next) gameRef.current?.pause();
+        else gameRef.current?.resume();
+      }
+      return next;
+    });
+  };
   const restart = () => {
     setScore(0);
     setLives(3);
+    setRealLevel(1);
     setPaused(false);
     setOver(false);
     setSaved(false);
+    if (RealGame) setPlayId((id) => id + 1);
   };
 
   return (
@@ -43,7 +67,9 @@ export default function GamePlayer({ game }: { game: Game }) {
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           <div className="hud-stat">
             <div className="l">Jugador</div>
-            <div className="v" style={{ color: "var(--ink)" }}>{name}</div>
+            <div className="v" style={{ color: "var(--ink)" }}>
+              {name}
+            </div>
           </div>
           <div className="hud-stat">
             <div className="l">Puntuación</div>
@@ -59,30 +85,57 @@ export default function GamePlayer({ game }: { game: Game }) {
           </div>
         </div>
         <div className="hud-actions">
-          <button className="btn yellow" onClick={() => setPaused((p) => !p)}>
+          <button className="btn yellow" onClick={togglePause}>
             {paused ? "REANUDAR" : "PAUSA"}
           </button>
-          <button className="btn magenta" onClick={endGame}>FIN</button>
-          <Link className="btn ghost" href={`/juego/${game.id}`}>SALIR</Link>
+          <button className="btn magenta" onClick={endGame}>
+            FIN
+          </button>
+          <Link className="btn ghost" href={`/juego/${game.id}`}>
+            SALIR
+          </Link>
         </div>
       </div>
 
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor" />
-            <div className="enemy e1" />
-            <div className="enemy e2" />
-            <div className="enemy e3" />
-            <div className="player-ship" />
-          </div>
+          {RealGame ? (
+            <RealGame
+              key={playId}
+              ref={gameRef}
+              onStateChange={(s) => {
+                setScore(s.score);
+                setLives(s.lives);
+                setRealLevel(s.level);
+              }}
+              onGameOver={() => setOver(true)}
+            />
+          ) : (
+            <div className="game-arena">
+              <div className="grid-floor" />
+              <div className="enemy e1" />
+              <div className="enemy e2" />
+              <div className="enemy e3" />
+              <div className="player-ship" />
+            </div>
+          )}
           {paused && (
-            <div className="crt-content" style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}>
+            <div
+              className="crt-content"
+              style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}
+            >
               <div>
-                <div className="pixel neon-yellow" style={{ fontSize: 22 }}>EN PAUSA</div>
+                <div className="pixel neon-yellow" style={{ fontSize: 22 }}>
+                  EN PAUSA
+                </div>
                 <div
                   className="mono"
-                  style={{ fontSize: 11, color: "var(--ink-dim)", marginTop: 10, letterSpacing: "0.16em" }}
+                  style={{
+                    fontSize: 11,
+                    color: "var(--ink-dim)",
+                    marginTop: 10,
+                    letterSpacing: "0.16em",
+                  }}
                 >
                   PULSA REANUDAR PARA CONTINUAR
                 </div>
@@ -107,17 +160,28 @@ export default function GamePlayer({ game }: { game: Game }) {
               <div className="input-row">
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 10))}
+                  onChange={(e) =>
+                    setName(e.target.value.toUpperCase().slice(0, 10))
+                  }
                   placeholder="TUS INICIALES"
                 />
-                <button className="btn yellow" onClick={() => setSaved(true)}>GUARDAR PUNTUACIÓN</button>
+                <button className="btn yellow" onClick={() => setSaved(true)}>
+                  GUARDAR PUNTUACIÓN
+                </button>
               </div>
             ) : (
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
             )}
             <div className="actions">
-              <button className="btn" onClick={restart}>JUGAR DE NUEVO</button>
-              <button className="btn magenta" onClick={() => router.push("/biblioteca")}>VOLVER AL VAULT</button>
+              <button className="btn" onClick={restart}>
+                JUGAR DE NUEVO
+              </button>
+              <button
+                className="btn magenta"
+                onClick={() => router.push("/biblioteca")}
+              >
+                VOLVER AL VAULT
+              </button>
             </div>
           </div>
         </div>

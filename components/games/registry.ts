@@ -26,6 +26,6 @@ type RealGameComponent = ForwardRefExoticComponent<
   RealGameProps & RefAttributes<RealGameHandle>
 >;
 
-export const REAL_GAMES: Record<string, RealGameComponent> = {
+export const REAL_GAMES: Partial<Record<string, RealGameComponent>> = {
   asteroids: AsteroidsCanvas,
 };

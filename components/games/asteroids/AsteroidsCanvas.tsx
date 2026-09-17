@@ -72,11 +72,10 @@ const AsteroidsCanvas = forwardRef<RealGameHandle, RealGameProps>(
         width={800}
         height={600}
         style={{
-          display: "block",
+          position: "absolute",
+          inset: 0,
           width: "100%",
-          maxWidth: "100%",
-          height: "auto",
-          aspectRatio: "4 / 3",
+          height: "100%",
         }}
       />
     );
