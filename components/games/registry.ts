@@ -18,9 +18,19 @@ export interface RealGameState {
   level: number;
 }
 
+// Paleta de color seleccionable por el jugador. "clasico" es el default:
+// reproduce la paleta neón original del motor (ver CLAUDE.md) sin cambios.
+export type GameSkin = "clasico" | "neon" | "retro";
+export const SKINS: { id: GameSkin; label: string }[] = [
+  { id: "clasico", label: "CLÁSICO" },
+  { id: "neon", label: "NEÓN" },
+  { id: "retro", label: "RETRO" },
+];
+
 export interface RealGameProps {
   onStateChange: (state: RealGameState) => void;
   onGameOver: (finalScore: number) => void;
+  skin?: GameSkin;
 }
 
 type RealGameComponent = ForwardRefExoticComponent<
