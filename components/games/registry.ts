@@ -5,6 +5,7 @@
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 import AsteroidsCanvas from "./asteroids/AsteroidsCanvas";
 import TetrisCanvas from "./tetris/TetrisCanvas";
+import VadoCanvas from "./vado/VadoCanvas";
 
 export interface RealGameHandle {
   pause(): void;
@@ -40,4 +41,5 @@ type RealGameComponent = ForwardRefExoticComponent<
 export const REAL_GAMES: Partial<Record<string, RealGameComponent>> = {
   asteroids: AsteroidsCanvas,
   tetris: TetrisCanvas,
+  vado: VadoCanvas,
 };
