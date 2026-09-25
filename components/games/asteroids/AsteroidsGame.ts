@@ -3,13 +3,39 @@
 // dibuja su propio HUD de texto: expone el estado del juego vía callbacks
 // para que lo muestre el HUD externo de GamePlayer.
 
-import type { RealGameProps, RealGameState } from "../registry";
+import type { GameSkin, RealGameProps, RealGameState } from "../registry";
 
 const W = 800;
 const H = 600;
 
-const CYAN = "#00f5ff";
-const MAGENTA = "#ff006e";
+interface Palette {
+  primary: string; // nave, balas, power-ups
+  secondary: string; // asteroides
+  thruster: string;
+  particleRgb: string; // componentes r,g,b para rgba() de las partículas
+}
+
+// "clasico" reproduce el cian/magenta original del motor (CLAUDE.md).
+const PALETTES: Record<GameSkin, Palette> = {
+  clasico: {
+    primary: "#00f5ff",
+    secondary: "#ff006e",
+    thruster: "rgba(255, 130, 0, 0.85)",
+    particleRgb: "255, 0, 110",
+  },
+  neon: {
+    primary: "#39ff14",
+    secondary: "#faff00",
+    thruster: "rgba(0, 245, 255, 0.85)",
+    particleRgb: "57, 255, 20",
+  },
+  retro: {
+    primary: "#ffb000",
+    secondary: "#ffb000",
+    thruster: "rgba(255, 176, 0, 0.85)",
+    particleRgb: "255, 176, 0",
+  },
+};
 
 const wrap = (v: number, max: number) => ((v % max) + max) % max;
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
@@ -46,8 +72,8 @@ class Bullet {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = CYAN;
+  draw(ctx: CanvasRenderingContext2D, palette: Palette) {
+    ctx.fillStyle = palette.primary;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
@@ -106,11 +132,11 @@ class Asteroid {
     ];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: Palette) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rot);
-    ctx.strokeStyle = MAGENTA;
+    ctx.strokeStyle = palette.secondary;
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -148,18 +174,18 @@ class PowerUp {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: Palette) {
     if (this.ttl < 2 && Math.floor(this.ttl * 8) % 2 === 0) return;
     const pulse = 0.85 + Math.sin(performance.now() / 150) * 0.15;
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(Math.PI / 4);
-    ctx.strokeStyle = CYAN;
+    ctx.strokeStyle = palette.primary;
     ctx.lineWidth = 2;
     const r = this.radius * pulse;
     ctx.strokeRect(-r, -r, r * 2, r * 2);
     ctx.restore();
-    ctx.fillStyle = CYAN;
+    ctx.fillStyle = palette.primary;
     ctx.font = "bold 12px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -237,7 +263,7 @@ class Ship {
     return [new Bullet(ox, oy, this.angle)];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: Palette) {
     if (this.dead) return;
     // Parpadeo durante invencibilidad de reaparición
     if (this.invincible > 0 && Math.floor(this.invincible * 8) % 2 === 0)
@@ -246,7 +272,7 @@ class Ship {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.strokeStyle = CYAN;
+    ctx.strokeStyle = palette.primary;
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
 
@@ -265,7 +291,7 @@ class Ship {
       ctx.moveTo(-8, -4);
       ctx.lineTo(-8 - rand(6, 14), 0);
       ctx.lineTo(-8, 4);
-      ctx.strokeStyle = "rgba(255, 130, 0, 0.85)";
+      ctx.strokeStyle = palette.thruster;
       ctx.stroke();
     }
 
@@ -300,9 +326,9 @@ class Particle {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: Palette) {
     const alpha = this.ttl / this.life;
-    ctx.strokeStyle = `rgba(255, 0, 110, ${alpha.toFixed(2)})`;
+    ctx.strokeStyle = `rgba(${palette.particleRgb}, ${alpha.toFixed(2)})`;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
@@ -338,6 +364,7 @@ export class AsteroidsGame {
   private lastTime: number | null = null;
   private paused = false;
   private destroyed = false;
+  private palette: Palette;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -346,6 +373,7 @@ export class AsteroidsGame {
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("No se pudo obtener el contexto 2D del canvas");
     this.ctx = ctx;
+    this.palette = PALETTES[callbacks.skin ?? "clasico"];
     this.ship = new Ship(this.keys);
     this.spawnAsteroids(4);
     this.loop = this.loop.bind(this);
@@ -368,6 +396,10 @@ export class AsteroidsGame {
   resume() {
     this.paused = false;
     this.lastTime = null;
+  }
+
+  setSkin(skin: GameSkin) {
+    this.palette = PALETTES[skin];
   }
 
   forceGameOver() {
@@ -542,11 +574,11 @@ export class AsteroidsGame {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, W, H);
 
-    this.particles.forEach((p) => p.draw(ctx));
-    this.asteroids.forEach((a) => a.draw(ctx));
-    this.powerUps.forEach((p) => p.draw(ctx));
-    this.bullets.forEach((b) => b.draw(ctx));
-    this.ship.draw(ctx);
+    this.particles.forEach((p) => p.draw(ctx, this.palette));
+    this.asteroids.forEach((a) => a.draw(ctx, this.palette));
+    this.powerUps.forEach((p) => p.draw(ctx, this.palette));
+    this.bullets.forEach((b) => b.draw(ctx, this.palette));
+    this.ship.draw(ctx, this.palette);
   }
 
   private loop(ts: number) {

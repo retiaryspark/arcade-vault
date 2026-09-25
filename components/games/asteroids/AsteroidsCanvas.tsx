@@ -17,7 +17,7 @@ function isTextInput(target: EventTarget | null) {
 }
 
 const AsteroidsCanvas = forwardRef<RealGameHandle, RealGameProps>(
-  function AsteroidsCanvas({ onStateChange, onGameOver }, ref) {
+  function AsteroidsCanvas({ onStateChange, onGameOver, skin }, ref) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const gameRef = useRef<AsteroidsGame | null>(null);
 
@@ -35,6 +35,7 @@ const AsteroidsCanvas = forwardRef<RealGameHandle, RealGameProps>(
       const game = new AsteroidsGame(canvas, {
         onStateChange: (state) => onStateChangeRef.current(state),
         onGameOver: (finalScore) => onGameOverRef.current(finalScore),
+        skin,
       });
       gameRef.current = game;
 
@@ -59,6 +60,10 @@ const AsteroidsCanvas = forwardRef<RealGameHandle, RealGameProps>(
         gameRef.current = null;
       };
     }, []);
+
+    useEffect(() => {
+      gameRef.current?.setSkin(skin ?? "clasico");
+    }, [skin]);
 
     useImperativeHandle(ref, () => ({
       pause: () => gameRef.current?.pause(),

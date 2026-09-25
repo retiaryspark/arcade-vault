@@ -10,7 +10,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Game } from "@/lib/data";
 import { useSession } from "@/lib/session-context";
-import { REAL_GAMES, type RealGameHandle } from "@/components/games/registry";
+import {
+  REAL_GAMES,
+  SKINS,
+  type GameSkin,
+  type RealGameHandle,
+} from "@/components/games/registry";
 import { saveScore } from "@/lib/scores";
 
 export default function GamePlayer({ game }: { game: Game }) {
@@ -28,6 +33,7 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [playId, setPlayId] = useState(0);
+  const [skin, setSkin] = useState<GameSkin>("clasico");
   const level = RealGame ? realLevel : 1 + Math.floor(score / 2500);
   const gameRef = useRef<RealGameHandle>(null);
 
@@ -108,6 +114,19 @@ export default function GamePlayer({ game }: { game: Game }) {
           </div>
         </div>
         <div className="hud-actions">
+          {RealGame && (
+            <div className="av-chips" style={{ marginRight: 8 }}>
+              {SKINS.map((s) => (
+                <button
+                  key={s.id}
+                  className={"chip" + (skin === s.id ? " active" : "")}
+                  onClick={() => setSkin(s.id)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
           <button className="btn yellow" onClick={togglePause}>
             {paused ? "REANUDAR" : "PAUSA"}
           </button>
@@ -126,6 +145,7 @@ export default function GamePlayer({ game }: { game: Game }) {
             <RealGame
               key={playId}
               ref={gameRef}
+              skin={skin}
               onStateChange={(s) => {
                 setScore(s.score);
                 setLives(s.lives);

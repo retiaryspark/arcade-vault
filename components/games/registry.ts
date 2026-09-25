@@ -4,7 +4,7 @@
 
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 import AsteroidsCanvas from "./asteroids/AsteroidsCanvas";
-import CaidaCanvas from "./caida/CaidaCanvas";
+import TetrisCanvas from "./tetris/TetrisCanvas";
 
 export interface RealGameHandle {
   pause(): void;
@@ -18,9 +18,19 @@ export interface RealGameState {
   level: number;
 }
 
+// Paleta de color seleccionable por el jugador. "clasico" es el default:
+// reproduce la paleta neón original del motor (ver CLAUDE.md) sin cambios.
+export type GameSkin = "clasico" | "neon" | "retro";
+export const SKINS: { id: GameSkin; label: string }[] = [
+  { id: "clasico", label: "CLÁSICO" },
+  { id: "neon", label: "NEÓN" },
+  { id: "retro", label: "RETRO" },
+];
+
 export interface RealGameProps {
   onStateChange: (state: RealGameState) => void;
   onGameOver: (finalScore: number) => void;
+  skin?: GameSkin;
 }
 
 type RealGameComponent = ForwardRefExoticComponent<
@@ -29,5 +39,5 @@ type RealGameComponent = ForwardRefExoticComponent<
 
 export const REAL_GAMES: Partial<Record<string, RealGameComponent>> = {
   asteroids: AsteroidsCanvas,
-  caida: CaidaCanvas,
+  tetris: TetrisCanvas,
 };

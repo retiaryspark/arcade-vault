@@ -1,11 +1,11 @@
 "use client";
 
-// Wrapper de React para el motor de Caída: monta el canvas, gestiona sus
+// Wrapper de React para el motor de Tetris: monta el canvas, gestiona sus
 // propios listeners de teclado y expone pause()/resume()/forceGameOver() al
 // registro (components/games/registry.ts) vía ref.
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { CaidaGame } from "./CaidaGame";
+import { TetrisGame } from "./TetrisGame";
 import type { RealGameHandle, RealGameProps } from "../registry";
 
 const CONTROL_KEYS = new Set([
@@ -23,10 +23,10 @@ function isTextInput(target: EventTarget | null) {
   );
 }
 
-const CaidaCanvas = forwardRef<RealGameHandle, RealGameProps>(
-  function CaidaCanvas({ onStateChange, onGameOver }, ref) {
+const TetrisCanvas = forwardRef<RealGameHandle, RealGameProps>(
+  function TetrisCanvas({ onStateChange, onGameOver }, ref) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const gameRef = useRef<CaidaGame | null>(null);
+    const gameRef = useRef<TetrisGame | null>(null);
 
     // Refs para no tener que recrear el motor cuando GamePlayer pasa nuevos
     // callbacks en cada render (evita duplicar el loop por dependencias).
@@ -39,7 +39,7 @@ const CaidaCanvas = forwardRef<RealGameHandle, RealGameProps>(
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const game = new CaidaGame(canvas, {
+      const game = new TetrisGame(canvas, {
         onStateChange: (state) => onStateChangeRef.current(state),
         onGameOver: (finalScore) => onGameOverRef.current(finalScore),
       });
@@ -89,4 +89,4 @@ const CaidaCanvas = forwardRef<RealGameHandle, RealGameProps>(
   },
 );
 
-export default CaidaCanvas;
+export default TetrisCanvas;
