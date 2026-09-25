@@ -1,4 +1,4 @@
-// Motor de Caída (Tetris), portado de resources/started-games/03-tetris/game.js.
+// Motor de Tetris, portado de resources/started-games/03-tetris/game.js.
 // Recibe el canvas por parámetro (sin variables globales de document) y no
 // dibuja su propio HUD de texto: expone el estado del juego vía callbacks.
 
@@ -59,7 +59,7 @@ const PIECES = [
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
-export class CaidaGame {
+export class TetrisGame {
   private ctx: CanvasRenderingContext2D;
   private board: number[][] = [];
   private current: {

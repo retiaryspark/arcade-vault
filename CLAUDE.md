@@ -27,7 +27,7 @@ Patrón fijado en SPEC 04 y repetido en SPEC 06 para portar un juego del catálo
 - Motor: clase TS vanilla `components/games/<id>/<Id>Game.ts`, constructor `(canvas, callbacks: RealGameProps)`, loop propio por `requestAnimationFrame` con `dt` acotado, métodos `handleKeyDown/handleKeyUp/pause/resume/forceGameOver/destroy`, `onStateChange({score,lives,level})` deduplicado. Canvas fijo 800×600, sin HUD dibujado (el HUD es externo, en `GamePlayer`). Paleta neón: jugador/aliados cian (`--cyan`/`#00f5ff`), enemigos/pila magenta (`--magenta`/`#ff006e`).
 - Wrapper `components/games/<id>/<Id>Canvas.tsx`: `"use client"`, `forwardRef<RealGameHandle, RealGameProps>`, listeners de teclado en `window` con `preventDefault` (guard `isTextInput`), `useImperativeHandle` exponiendo `pause/resume/forceGameOver`.
 - Único punto de integración: una línea en `components/games/registry.ts` (`REAL_GAMES`).
-- Implementados hoy: `asteroids` (SPEC 04) y `caida`/Tetris (SPEC 06, con la pieza extra "tuerca" del original). El resto del catálogo (`bloque-buster`, `serpentina`, `gloton`, `invasores`, `ranaria`, `duelo-pixel`) sigue con la simulación del MVP.
+- Implementados hoy: `asteroids` (SPEC 04) y `tetris` (SPEC 06, con la pieza extra "tuerca" del original). El resto del catálogo (`arkanoid`, `snake`, `pac-man`, `space-invaders`, `frogger`, `pong`) sigue con la simulación del MVP.
 - `lib/scores.ts` (`getScores`/`saveScore`) y el esquema `scores`/`profiles` ya son genéricos por `game_id`: agregar un juego a `REAL_GAMES` alcanza para que el leaderboard real funcione en Detalle y Salón, sin tocar infraestructura. Índice compuesto `(game_id, score desc)` en `scores` desde SPEC 05.
 
 ## Método de trabajo: specs
@@ -40,7 +40,7 @@ Agente `.claude/agents/game-planner.md` — evalúa (no implementa) si una idea 
 
 ## Fuentes de referencia para portar juegos
 
-`resources/started-games/` trae el `game.js` original de juegos aún no portados (ej. `03-tetris` → `caida`, `04-arkanoid` → `bloque-buster`). Al portar, se preserva la física/balance/puntuación original tal cual, solo se recolorea a la paleta neón.
+`resources/started-games/` trae el `game.js` original de juegos aún no portados (ej. `03-tetris` → `tetris`, `04-arkanoid` → `arkanoid`). Al portar, se preserva la física/balance/puntuación original tal cual, solo se recolorea a la paleta neón.
 
 ## Fuera de alcance recurrente (declarado explícitamente en cada spec)
 

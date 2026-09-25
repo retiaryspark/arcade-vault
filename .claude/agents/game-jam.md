@@ -76,7 +76,7 @@ incluir:
    - `C:\Users\CONSFANROB\.claude\skills\spec\SKILL.md` y
      `C:\Users\CONSFANROB\.claude\skills\spec\template.md` — tono, formato y
      reglas de redacción exactas que toda spec de este repo debe seguir.
-   - `specs/04-asteroids-juego-real.md` y `specs/06-caida-juego-real.md` como
+   - `specs/04-asteroids-juego-real.md` y `specs/06-tetris-juego-real.md` como
      referencia concreta de redacción para la spec de motor real (header,
      secciones, estilo de "Decisiones tomadas y descartadas").
 3. El encargo: diseñar UN concepto de juego original que encaje con el tema,

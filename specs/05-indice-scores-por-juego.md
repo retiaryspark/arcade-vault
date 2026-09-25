@@ -13,13 +13,13 @@
 **Incluye:**
 
 - Migración SQL nueva en Supabase: índice compuesto `(game_id, score desc)` sobre `public.scores`, que es exactamente la forma de la consulta que ya usa `lib/scores.ts::getScores` (`.eq("game_id", ...).order("score", { ascending: false }).limit(...)`).
-- Confirmación explícita (sin cambios de código) de que el esquema actual de `scores` — `game_id text not null`, sin FK ni `check` de valores permitidos — ya acepta cualquiera de los 8 `id` definidos en `lib/data.ts` (`bloque-buster`, `caida`, `serpentina`, `gloton`, `invasores`, `asteroids`, `ranaria`, `duelo-pixel`), no solo `asteroids`.
+- Confirmación explícita (sin cambios de código) de que el esquema actual de `scores` — `game_id text not null`, sin FK ni `check` de valores permitidos — ya acepta cualquiera de los 8 `id` definidos en `lib/data.ts` (`arkanoid`, `tetris`, `snake`, `pac-man`, `space-invaders`, `asteroids`, `frogger`, `pong`), no solo `asteroids`.
 - Verificación con `explain` de que la consulta de `getScores` usa el índice nuevo (`Index Scan`) en vez de recorrer toda la tabla (`Seq Scan`).
 - Prueba de inserción/lectura con un `game_id` distinto de `asteroids` para confirmar en la práctica que el mismo `lib/scores.ts` ya funciona para cualquier juego del catálogo.
 
 **Explícitamente fuera de alcance (no en este spec):**
 
-- Una tabla física por juego (`scores_asteroids`, `scores_caida`, etc.). Se descarta a favor de la tabla `scores` compartida ya existente: mismo resultado funcional (un top independiente por juego), sin duplicar esquema ni políticas RLS 8 veces.
+- Una tabla física por juego (`scores_asteroids`, `scores_tetris`, etc.). Se descarta a favor de la tabla `scores` compartida ya existente: mismo resultado funcional (un top independiente por juego), sin duplicar esquema ni políticas RLS 8 veces.
 - Conectar guardado/lectura real (`REAL_GAMES`, `saveScore`/`getScores` en el reproductor) para los 7 juegos que hoy usan la partida simulada (`GamePlayer.tsx`). Solo `asteroids` tiene motor real; los demás siguen fuera de alcance hasta que cada uno tenga su propio spec de "juego real", igual que SPEC 04 lo dejó explícito.
 - Reemplazar `TOP_PLAYERS_TODAY` (el "TOP JUGADORES · HOY" hardcodeado en `app/page.tsx`) por una consulta real. Queda pendiente como trabajo futuro, fuera de este spec.
 - Cambios a las políticas de Row Level Security de `scores` (select público; insert solo si `auth.uid() = user_id`) — siguen exactamente igual.
@@ -59,7 +59,7 @@ Este índice calza exactamente con la consulta que ya hace `lib/scores.ts::getSc
 ## Plan de implementación
 
 1. **Crear y aplicar el índice.** Migración `scores_game_id_score_idx`: índice compuesto `(game_id, score desc)` en `public.scores`. Verificación: `mcp__supabase__list_migrations` muestra la nueva migración aplicada; `select count(*) from scores` sigue devolviendo la(s) fila(s) ya existente(s) (no se truncó la tabla); una consulta a `pg_indexes` (`select indexname from pg_indexes where tablename = 'scores'`) muestra `scores_game_id_score_idx`. Nota: con tan pocas filas en la tabla, `explain` sobre la consulta de `getScores` puede seguir mostrando `Seq Scan` — es la elección correcta y esperada del planner de Postgres para tablas minúsculas, no una señal de que el índice esté mal creado.
-2. **Confirmar que los 8 juegos ya funcionan sin cambios de código.** Insertar con `mcp__supabase__execute_sql` una fila de prueba con `game_id = 'caida'` (o cualquier id distinto de `asteroids`) y un `user_id` válido; llamar `getScores('caida', 10)` desde la consola del navegador (o una prueba manual equivalente) y confirmar que la fila aparece ordenada correctamente; luego borrar esa fila de prueba. Verificación: la fila aparece y desaparece según lo esperado; ningún archivo en `lib/`, `app/` o `components/` cambió durante este paso.
+2. **Confirmar que los 8 juegos ya funcionan sin cambios de código.** Insertar con `mcp__supabase__execute_sql` una fila de prueba con `game_id = 'tetris'` (o cualquier id distinto de `asteroids`) y un `user_id` válido; llamar `getScores('tetris', 10)` desde la consola del navegador (o una prueba manual equivalente) y confirmar que la fila aparece ordenada correctamente; luego borrar esa fila de prueba. Verificación: la fila aparece y desaparece según lo esperado; ningún archivo en `lib/`, `app/` o `components/` cambió durante este paso.
 
 ---
 

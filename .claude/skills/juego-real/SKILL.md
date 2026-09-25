@@ -1,8 +1,7 @@
 ---
 name: juego-real
 description: Redacta un spec en specs/ para convertir un juego del catálogo (lib/data.ts) en un juego real jugable con motor propio y leaderboard de Supabase, siguiendo las reglas del método spec-driven de este repo (/spec, template.md) y el patrón técnico ya implementado para asteroids (SPEC 02/04/05). Investiga si hay código fuente de referencia en resources/started-games/ o si hay que diseñar un clon del género desde cero, y lo deja documentado como spec en Draft — no implementa código. Úsala cuando el usuario pida "hacer real" un juego, portar un game.js, o preparar el spec de <game-id>. Seguido de /spec-impl para implementar.
-disable-model-invocation: true
-argument-hint: "<game-id>  (uno de: bloque-buster, caida, serpentina, gloton, invasores, ranaria, duelo-pixel)"
+argument-hint: "<game-id>  (uno de: arkanoid, tetris, snake, pac-man, space-invaders, frogger, pong)"
 allowed-tools: Read, Glob, Grep, Write, AskUserQuestion, Bash(ls:*), Bash(cat:*), Bash(date:*)
 ---
 
@@ -85,9 +84,9 @@ Con las reglas de redacción ya aprendidas, investigar el contenido específico 
 
 ## Paso 6 — Decidir portar vs. diseñar desde cero
 
-1. Mapeo por convención observada: `caida` → `resources/started-games/03-tetris/game.js`; `bloque-buster` → `resources/started-games/04-arkanoid/game.js`. Usar `Glob resources/started-games/*` para confirmar qué carpetas existen.
+1. Mapeo por convención observada: `tetris` → `resources/started-games/03-tetris/game.js`; `arkanoid` → `resources/started-games/04-arkanoid/game.js`. Usar `Glob resources/started-games/*` para confirmar qué carpetas existen.
 2. **Si hay fuente para `$ARGUMENTS`:** leer el `game.js` completo (y archivos acompañantes: `levels.js`, `assets/spritesheet.js` para arkanoid) para poder describir en el spec la física/balance/puntuación exactos a preservar sin rebalancear. Caso especial multi-canvas (Tetris: tablero 300×600 + panel de siguiente pieza): fijar en el spec la decisión de dibujar ambas regiones en un solo `<canvas width={800} height={600}>`, ya que `RealGameProps`/`RealGameHandle`/`REAL_GAMES` solo soportan un componente por juego y esa interfaz compartida no se toca.
-3. **Si no hay fuente:** inferir el género por id/título/categoría de `lib/data.ts` (`serpentina`→snake, `gloton`→pac-man, `invasores`→space invaders, `ranaria`→frogger, `duelo-pixel`→pong/versus de 2 jugadores) y definir mecánicas concretas para la sección de Decisiones: tamaño de grid/tablero, curva de velocidad o dificultad, condición de victoria/derrota, regla de puntuación. No hace falta que el usuario apruebe cada mecánica antes de redactar — se documentan como decisiones tomadas, revisables cuando lea el spec.
+3. **Si no hay fuente:** inferir el género por id/título/categoría de `lib/data.ts` (`snake`→snake, `pac-man`→pac-man, `space-invaders`→space invaders, `frogger`→frogger, `pong`→pong/versus de 2 jugadores) y definir mecánicas concretas para la sección de Decisiones: tamaño de grid/tablero, curva de velocidad o dificultad, condición de victoria/derrota, regla de puntuación. No hace falta que el usuario apruebe cada mecánica antes de redactar — se documentan como decisiones tomadas, revisables cuando lea el spec.
 4. Si algo sigue siendo genuinamente ambiguo (p. ej. qué tan fiel debe ser un clon desde cero a un juego real conocido), preguntar en bloque con `AskUserQuestion`, con el tono de la Fase 2 de `/spec` aprendido en el Paso 2 — acotado, porque la mayoría de las preguntas genéricas de `/spec` (persistencia, integración con specs previos, esquema de datos) ya están resueltas por precedente y no hace falta repetirlas.
 
 ## Paso 7 — Redactar el spec
@@ -108,7 +107,7 @@ Combinar el esqueleto del Paso 3 + la redacción concreta del Paso 4 + el conten
 Replicando exactamente la Fase 4 de `/spec` (aprendida en el Paso 2):
 
 1. Siguiente número secuencial de `specs/` según el listado del contexto de sesión.
-2. Slug: `<NN>-<game-id>-juego-real.md` (ej. `06-caida-juego-real.md`).
+2. Slug: `<NN>-<game-id>-juego-real.md` (ej. `06-tetris-juego-real.md`).
 3. Escribir el archivo directo en `specs/`, sin pedir permiso para el nombre.
 4. Estado inicial `Draft`/`Borrador` — **nunca** `Aprobado` automáticamente.
 5. Verificar que las specs referenciadas en "Depende de" (02, 04, 05) existen de verdad.
@@ -126,4 +125,4 @@ Replicando exactamente la Fase 4 de `/spec` (aprendida en el Paso 2):
 
 ## Argumentos
 
-`$ARGUMENTS` es el `game-id` del catálogo (`lib/data.ts`) a portar: uno de `bloque-buster`, `caida`, `serpentina`, `gloton`, `invasores`, `ranaria`, `duelo-pixel`. Si viene vacío, seguir el Paso 1.
+`$ARGUMENTS` es el `game-id` del catálogo (`lib/data.ts`) a portar: uno de `arkanoid`, `tetris`, `snake`, `pac-man`, `space-invaders`, `frogger`, `pong`. Si viene vacío, seguir el Paso 1.
