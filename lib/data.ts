@@ -105,6 +105,17 @@ export const GAMES: Game[] = [
     best: 24,
     plays: "4.2K",
   },
+  {
+    id: "vado",
+    title: "VADO",
+    short: "Planifica tu cruce, paso a paso, antes de dar el primero.",
+    long: "Un campo de baldosas de neón separa tu punto de partida de la meta, cruzado por franjas de peligro que laten en un ritmo fijo y visible. No hay reflejos que valgan: traza la ruta completa —cada salto, cada pausa— antes de mover una sola ficha. Ejecuta el plan y descubre si calculaste bien el ritmo del peligro.",
+    cat: "PUZZLE",
+    cover: "cover-vado",
+    color: "yellow",
+    best: 8600,
+    plays: "1.8K",
+  },
 ];
 
 export const CATS = ["TODOS", "ARCADE", "PUZZLE", "SHOOTER", "VERSUS"] as const;

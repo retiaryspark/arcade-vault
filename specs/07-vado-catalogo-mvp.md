@@ -1,6 +1,6 @@
 # 07 — Vado: alta al catálogo (MVP simulado)
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Depende de:** Ninguno (usa la simulación visual genérica ya existente de SPEC 01)
 **Fecha:** 2026-09-20
 
@@ -59,12 +59,12 @@ Este spec introduce una entrada nueva en la estructura `Game` ya existente (`lib
 
 ## Criterios de aceptación
 
-- [ ] `GAMES` en `lib/data.ts` incluye la entrada `id: "vado"` con todos los campos de `Game` completos.
-- [ ] `/biblioteca` muestra la card VADO, filtrable por el chip PUZLE y encontrable por el buscador.
-- [ ] `.cover-vado` en `app/globals.css` renderiza una portada distinta a las 8 ya existentes, sin reutilizar imaginería de ruta/río de Frogger.
-- [ ] `/juego/vado` muestra el detalle con `seededScores` (panel de mejores puntuaciones simulado).
-- [ ] `/juego/vado/jugar` es jugable con la simulación visual genérica del MVP (mismo comportamiento que `arkanoid`/`pac-man`/etc.), sin entrada todavía en `REAL_GAMES`.
-- [ ] `npm run dev` levanta sin errores y `npm run lint` pasa limpio.
+- [x] `GAMES` en `lib/data.ts` incluye la entrada `id: "vado"` con todos los campos de `Game` completos.
+- [x] `/biblioteca` muestra la card VADO, filtrable por el chip PUZLE y encontrable por el buscador.
+- [x] `.cover-vado` en `app/globals.css` renderiza una portada distinta a las 8 ya existentes, sin reutilizar imaginería de ruta/río de Frogger.
+- [x] `/juego/vado` muestra el detalle con `seededScores` (panel de mejores puntuaciones simulado).
+- [x] `/juego/vado/jugar` es jugable con la simulación visual genérica del MVP (mismo comportamiento que `arkanoid`/`pac-man`/etc.), sin entrada todavía en `REAL_GAMES`.
+- [x] `npm run dev` levanta sin errores y `npm run lint` pasa limpio.
 
 ---
 
