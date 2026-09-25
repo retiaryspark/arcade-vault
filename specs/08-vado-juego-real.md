@@ -1,6 +1,6 @@
 # 08 — Vado: motor real de planificación por turnos
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Depende de:** SPEC 07 (alta de VADO al catálogo mock), SPEC 04 (patrón `REAL_GAMES`/`RealGameProps`/`RealGameHandle`/`GamePlayer`), SPEC 05 (índice y confirmación de que `scores`/`getScores` ya son genéricos por `game_id`)
 **Fecha:** 2026-09-20
 
@@ -132,5 +132,5 @@ export const REAL_GAMES: Partial<Record<string, RealGameComponent>> = {
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Un generador de patrones de peligro mal calibrado podría producir un nivel sin ventana segura alcanzable (irresoluble).                                              | El generador garantiza explícitamente al menos una ventana segura por ciclo en cada franja (paso 1); validar manualmente varios niveles seguidos antes de cerrar el paso 1.                                                    |
 | Confundir "deshacer un paso en planificación" (gratis) con "reintentar tras un fallo" (cuesta 1 vida) puede generar un motor con dos rutas de retroceso poco claras. | Mantener ambos casos como transiciones de estado explícitas y separadas en la máquina de fases (`planning`→`planning` por `Backspace`/`KeyR`; `executing`→`planning` solo por colisión), documentadas en el paso 1-2 del plan. |
-| Montar el motor en un `useEffect` con Strict Mode de desarrollo (efectos invocados dos veces) puede duplicar el loop o los listeners si el cleanup no cancela todo.  | Copiar el patrón ya probado de `TetrisCanvas.tsx`: guardar refs de listeners y `rafId`, quitarlos y llamar `destroy()` en el cleanup; probar con recarga en modo desarrollo antes de cerrar el paso 3.                          |
+| Montar el motor en un `useEffect` con Strict Mode de desarrollo (efectos invocados dos veces) puede duplicar el loop o los listeners si el cleanup no cancela todo.  | Copiar el patrón ya probado de `TetrisCanvas.tsx`: guardar refs de listeners y `rafId`, quitarlos y llamar `destroy()` en el cleanup; probar con recarga en modo desarrollo antes de cerrar el paso 3.                         |
 | En móvil `/juego/vado/jugar` no es jugable (solo teclado).                                                                                                           | Aceptado y documentado como fuera de alcance, igual que en SPEC 04/06.                                                                                                                                                         |
